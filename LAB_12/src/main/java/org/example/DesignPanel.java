@@ -14,5 +14,6 @@ public class DesignPanel extends JPanel {
 
     private void init() {
         setPreferredSize(new Dimension(W, H));
+        setLayout(null); // altfel din cate am observat ramane relativa (similar cu Justify pe centru)
     }
 }
