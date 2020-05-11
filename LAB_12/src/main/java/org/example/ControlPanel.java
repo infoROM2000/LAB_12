@@ -13,6 +13,8 @@ public class ControlPanel extends JPanel {
     JTextField textObiectField = new JTextField(50);
     JButton addBtn = new JButton("Adauga");
     JButton resetBtn = new JButton("Reset"); //buton pentru resetarea textului
+    final static int objectW=100, objectH=100; //dimensiuni standard obiect
+    int pozX=0,pozY=0;
 
     public ControlPanel(MainFrame frame) {
         this.frame = frame;
@@ -36,7 +38,7 @@ public class ControlPanel extends JPanel {
         String text = numeClasaField.getText();
         Class clasa;
         try {
-            clasa = Class.forName(text);
+            clasa = Class.forName(text); //se incearca incarcarea dinamica a clasei
         } catch (ClassNotFoundException ex) {
             System.out.println("Nu s-a gasit clasa cu numele: " + text);
             System.err.println(ex);
@@ -47,19 +49,17 @@ public class ControlPanel extends JPanel {
             System.out.println(s);
         }
         String tip = split[2]; // al 3-lea cuvant care este tipul (dupa javax si swing)
-        JButton b;
-        JLabel l;
+
         try {
             switch (tip) {
                 case "JButton":
-                    b = (JButton) clasa.newInstance();
-                    b.setPreferredSize(new Dimension(100,100));
+                    JButton b = (JButton) clasa.newInstance();
                     b.setText(textObiectField.getText());
-                    b.setBounds(100,100,100,100);
+                    b.setBounds(pozX,pozY,objectH,objectW);
                     frame.designPanel.add(b);
                     break;
                 case "JLabel":
-                    l = (JLabel) clasa.newInstance();
+                    JLabel l = (JLabel) clasa.newInstance();
                     l.setPreferredSize(new Dimension(100,100));
                     l.setText(textObiectField.getText());
                     frame.designPanel.add(l);
@@ -68,7 +68,14 @@ public class ControlPanel extends JPanel {
         } catch (InstantiationException | IllegalAccessException instantiationException) {
             instantiationException.printStackTrace();
         }
-        revalidate(); // necesar altfel nu se actualizeaza DesignPanelul
+        pozX+=objectW;
+        if(pozX==W)
+        {
+            pozX=0;
+            pozY+=objectH;
+        }
+        frame.designPanel.revalidate(); // necesar altfel nu se actualizeaza DesignPanelul
+        frame.designPanel.repaint();
     }
 
     private void reset(ActionEvent e) {
